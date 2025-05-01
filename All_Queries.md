@@ -120,6 +120,45 @@ on p1.customer_id=c.customer_id
 Group By first_name
 ```
 
+# 7- Advanced Managing tables & databases
+
+**Manging_tables**
 ```
+Data_Defination
+->Create
+->Alter
+->Drop
+*Data structures
+
+Data_Manipulation
+->Insert
+->Update
+->Delete
+* data itself
+
+Data_types
+Constraints
+Primary_key
+Foreign_key
+views
+
+```
+
+**Create Database**
+```
+Create Database Company_x
+with encoding='UTF-8';
+
+Comment on Database company_x is 'That is our Database'
+```
+
+**Constraints**
+```
+Not Null- Ensure not null value
+Unique -Ensure all the values in the column are diffecnt
+Default-Sets a default value for a column if no value is specified
+Primary Key-A combination of a not null and unique .Uniqueloy identifies each row in table
+Refenences - Ensure referral integrity ( only values of another columns can be used
+Check -Ensures that the values of the columns has specific condition
 
 ```
