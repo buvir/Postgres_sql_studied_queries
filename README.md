@@ -1,0 +1,2 @@
+# Postgres_sql_studied_queries
+Postgres_sql_studied_queries
