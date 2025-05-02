@@ -258,6 +258,34 @@ Delete From songs where song_id in (4,5)
 Returning song_name , song_id 
 ```
 
+**Create Table AS**
+```
+Create Table Customer Spendings
+AS
+Select first_name ||' '||  last_name AS name ,
+SUM (amount) as Total_amount
+from customer c
+Left Join payment p
+on c.customer_id=p.customer_id
+Group By first_name ||' '||  last_name 
+```
+
+**View**
+```
+CREATE VIEW films_category
+AS
+SELECT 
+title,
+name,
+length
+FROM film f
+LEFT JOIN film_category fc
+ON f.film_id=fc.film_id
+LEFT JOIN category c
+ON c.category_id=fc.category_id
+WHERE name IN ('Action','Comedy')
+ORDER BY length DESC
+```
 
 
 
