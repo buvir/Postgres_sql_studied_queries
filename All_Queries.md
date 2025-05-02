@@ -120,7 +120,7 @@ on p1.customer_id=c.customer_id
 Group By first_name
 ```
 
-# 7- Advanced Managing tables & databases
+# 9- Advanced Managing tables & databases
 
 **Manging_tables**
 ```
@@ -162,3 +162,104 @@ Refenences - Ensure referral integrity ( only values of another columns can be u
 Check -Ensures that the values of the columns has specific condition
 
 ```
+
+**Create Table**
+```
+Create Table Director
+(
+director_id serial Primary key,
+Director_account_name Varchar(20) Unique,
+First_name Varchar(50),
+last_name Varchar(50) Default 'Not Specfied',
+Date_of_birth Date,
+address_id int Refrences address (address_id))
+```
+
+**Create Table**
+```
+CREATE TABLE online_sales (
+transaction_id SERIAL PRIMARY KEY,
+customer_id INT REFERENCES customer(customer_id),
+film_id INT REFERENCES film(film_id),
+amount numeric(5,2) NOT NULL,
+promotion_code VARCHAR(10) DEFAULT 'None'
+)
+```
+**Insert**
+```
+Insert into online_sales (customer_id , film_id,amount)
+values(269,13,10.9),(270,12,22.99)
+```
+
+**Alter**
+```
+Alter Table staff
+Drop column if exists first_name
+
+Alter Table staff
+Add column date_of_birth Date
+
+Alter Table staff
+Alter Column ADDRESS_ID Type small_int
+
+Alter Table staff
+Rename column first_name to name
+
+Alter Table staff
+Alter Column store_id set Default 1
+
+Alter Table <Table Name>
+Alter Column <column_name> Drop Not Null
+
+Alter table director
+Alter column director_account_name Type Varchar (30),
+Alter Column last_name Drop Default,
+Alter Column last_name set Not Null,
+Add column email varchar (40),
+Rename Director_account_name to account_name
+
+```
+**Drop & Truncate**
+
+```
+
+Drop Table <Table Name> : Deletes the table,
+Truncate Table <Table Name> - Deletes all the data in the table 
+
+```
+
+**Check**
+```
+Create Table director( name text check (length (name)>1)
+
+Alter Table director Add constraint date_check Check (start_date <end_date)
+
+```
+
+# 7- Advanced Views & Data Manipulations
+
+
+**Update**
+```
+Update songs SET genre ='Country music' where song_id =4
+
+Update songs price =song _id+0.99
+
+update customer set email = lower( email)
+
+```
+
+**Delete**
+```
+Delete from songs
+where song_id=4
+
+Delete From songs where song_id in (4,5)
+Returning song_name , song_id 
+```
+
+
+
+
+
+
