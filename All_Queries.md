@@ -236,7 +236,7 @@ Alter Table director Add constraint date_check Check (start_date <end_date)
 
 ```
 
-# 7- Advanced Views & Data Manipulations
+# 10 - Advanced Views & Data Manipulations
 
 
 **Update**
@@ -287,7 +287,16 @@ WHERE name IN ('Action','Comedy')
 ORDER BY length DESC
 ```
 
+**Managing View**
+```
+Create or Replace View V_customer_info
+AS new_query
 
+```
+
+# 11 - Pro Window Functions
+**Over() with partion By**
+```
 
 
 
