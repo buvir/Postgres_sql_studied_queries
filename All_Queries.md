@@ -310,5 +310,10 @@ Select transaction_id, payment_type,customer_id,price_in_transaction,
 count(*) over( partition by customer_id)
 from sales s
 
+Select *,
+sum (amount) over (partition by customer_id)
+from payment
+order by 1
+
 ```
 
