@@ -297,6 +297,18 @@ AS new_query
 # 11 - Pro Window Functions
 **Over() with partion By**
 ```
+Agg (agg_column) over( partition by partion_column)
+```
+
+```
+Select transaction_id, payment_type,customer_id,price_in_transaction,
+sum(price_in_transaction) over (partition by customer_id)
+from sales s
 
 
+Select transaction_id, payment_type,customer_id,price_in_transaction,
+count(*) over( partition by customer_id)
+from sales s
+
+```
 
