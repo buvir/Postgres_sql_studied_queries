@@ -321,4 +321,25 @@ from payment
 order by customer_id
 
 ```
+**Over() with Order By**
+```
+select * ,
+sum (amount)over( order by payment_date)
+from payment
+
+select * ,
+sum (amount)over( Partition By customer_id order by payment_date)
+from payment
+
+select flight_id,
+departure_airport,
+sum(actual_arrival-scheduled_arrival)
+over (partition by departure_airport order by flight_id)
+from flights
+
+```
+
+**Rank**
+```
+
 
