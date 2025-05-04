@@ -315,5 +315,10 @@ sum (amount) over (partition by customer_id)
 from payment
 order by 1
 
+Select *,
+count(*) over (partition by amount,customer_id)
+from payment
+order by customer_id
+
 ```
 
