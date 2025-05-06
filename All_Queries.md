@@ -341,5 +341,93 @@ from flights
 
 **Rank**
 ```
+Select f.title ,c.name,f.length ,
+Rank ()over ( order by length)
+from film f
+left join film_category fc on f.film_id=fc.film_id 
+left join category c on c.category_id= fc.category_id
+
+Select f.title ,c.name,f.length ,
+Dense_Rank ()over ( order by length)
+from film f
+left join film_category fc on f.film_id=fc.film_id 
+left join category c on c.category_id= fc.category_id
+
+Select f.title ,c.name,f.length ,
+Dense_Rank ()over ( Partition by name order by length)
+from film f
+left join film_category fc on f.film_id=fc.film_id 
+left join category c on c.category_id= fc.category_id
+
+Select * from (Select f.title ,c.name,f.length ,
+Dense_Rank ()over ( Partition by name order by length) as Rank
+from film f
+left join film_category fc on f.film_id=fc.film_id 
+left join category c on c.category_id= fc.category_id) a
+where Rank=1  
+
+
+Select * from(
+Select name ,country ,count(*),
+Rank () Over (Partition by country order by count(*) desc) 
+from customer_list
+left join payment on id=customer_id
+group by name, country) a
+where rank between 1 and 3
+
+
+```
+
+
+**First_value()**
+```
+Select * from(
+Select name ,country ,count(*),
+First_value(count(*)) Over (Partition by country order by count(*) asc) 
+from customer_list
+left join payment on id=customer_id
+group by name, country) a
+```
+
+
+**Lead & Lag**
+```
+Select name ,country ,count(*),
+lEAD(count(*)) Over (Partition by country order by count(*) asc) as rank
+from customer_list 
+left join payment on id=customer_id
+group by name, country
+
+Select name ,country ,count(*),
+lEAD(name)) Over (Partition by country order by count(*) asc) as rank
+from customer_list 
+left join payment on id=customer_id
+group by name, country
+
+
+Select name ,country ,count(*),
+lEAD(count(*)) Over (Partition by country order by count(*) asc) as rank,
+lEAD(count(*)) Over (Partition by country order by count(*) asc) -count(*)
+from customer_list 
+left join payment on id=customer_id
+group by name, country
+
+Select name ,country ,count(*),
+LAG(count(*)) Over (Partition by country order by count(*) asc) as rank,
+LAG(count(*)) Over (Partition by country order by count(*) asc) -count(*)
+from customer_list 
+left join payment on id=customer_id
+group by name, country
+
+
+Select sum (amount),
+date (payment_date),
+Lag (sum(amount)) over (order by date(payment_date)) as Previous_day,
+sum(amount)-Lag (sum(amount)) over (order by date(payment_date)) as difference
+from payment
+group by date (payment_date)
+
+
+```
 
 
