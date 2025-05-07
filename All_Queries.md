@@ -509,7 +509,214 @@ ORDER BY 1,2,3
 **Self_joins**
 ```
 
+CREATE TABLE employee (
+	employee_id INT,
+	name VARCHAR (50),
+	manager_id INT
+);
+
+INSERT INTO employee 
+VALUES
+	(1, 'Liam Smith', NULL),
+	(2, 'Oliver Brown', 1),
+	(3, 'Elijah Jones', 1),
+	(4, 'William Miller', 1),
+	(5, 'James Davis', 2),
+	(6, 'Olivia Hernandez', 2),
+	(7, 'Emma Lopez', 2),
+	(8, 'Sophia Andersen', 2),
+	(9, 'Mia Lee', 3),
+	(10, 'Ava Robinson', 3);
+
 ```
+```
+select 
+emp.employee_id,
+emp.name as employee,
+mng.name as manager
+
+from employee emp
+Left join employee mng
+on emp.manager_id=mng.manager_id
+
+```
+```
+select 
+emp.employee_id,
+emp.name as employee,
+mng.name as manager,
+mng2.name as manager_of_manager
+from employee emp
+Left join employee mng
+on emp.manager_id=mng.manager_id
+Left join employee mng2
+on mng.manager_id=mng2.manager_id
+
+```
+
+**Cross_joins**
+```
+Select staff_id,
+store.store_id
+from staff
+cross join store
+
+
+Select staff_id,
+store.store_id,
+last_name,
+store.store_id*staff_id
+from staff
+cross join store
+```
+
+
+**Natural_joins**
+```
+Select * from payment
+Natural left join customer
+```
+
+# 14 - Pro: stored procedures,user defined functions
+
+**user defined functions**
+```
+CREATE OR REPLACE FUNCTION count_rr (min_rr decimal(4,2), max_rr decimal(4,2))
+RETURNS int
+LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    movie_count int;
+BEGIN
+    SELECT count(*) INTO movie_count 
+    FROM film 
+    WHERE rental_rate BETWEEN min_rr AND max_rr;
+    
+    RETURN movie_count;
+END;
+$$;
+
+
+DROP FUNCTION IF EXISTS count_rr(decimal(4,2), decimal(4,2));
+
+Select count_rr (0,6)
+
+```
+**Transactions & Commit**
+```
+
+CREATE TABLE acc_balance (
+    id SERIAL PRIMARY KEY,
+    first_name TEXT NOT NULL,
+	last_name TEXT NOT NULL,
+    amount DEC(9,2) NOT NULL    
+);
+
+INSERT INTO acc_balance
+VALUES 
+(1,'Tim','Brown',2500),
+(2,'Sandra','Miller',1600)
+
+SELECT * FROM acc_balance;
+
+Begin;
+Update acc_balance
+set amount= amount-100
+where id=1
+
+commit
+
+drop table acc_balance
+```
+
+**Roll Back**
+```
+Begin;
+update acc_balance
+set amount=amount+100
+where id =2;
+Delete From acc_balance
+where id =1;
+
+select  * from acc_balance
+
+Rollback
+```
+
+**Roll Back to savepoint**
+```
+Begin;
+update acc_balance
+set amount=amount+100
+where id =2;
+savepoint s1;
+Delete From acc_balance
+where id =1;
+
+select  * from acc_balance
+
+Rollback to savepoint s1;
+
+```
+
+**stored_procedures**
+```
+
+Create or Replace Procedure sp_transfer
+(tr_amount int,sender int, recipient int)
+Language plpgsql
+as
+$$
+Begin
+-- add balance
+Update acc_balance
+set amount = amount+tr_amount
+where id= recipient;
+
+-- subtract balance
+Update acc_balance
+set amount = amount-tr_amount
+where id= sender;
+commit;
+end;
+$$
+
+
+Call sp_transfer(500,1,2)
+
+select * from acc_balance
+
+
+DROP PROCEDURE IF EXISTS sp_transfer;
+DROP PROCEDURE IF EXISTS sp_transfer(INT, INT, INT);
+
+
+DO $$
+DECLARE
+    proc_record RECORD;
+BEGIN
+    FOR proc_record IN 
+        SELECT oid, proname, pg_get_function_identity_arguments(oid) as args
+        FROM pg_proc
+        WHERE proname = 'sp_transfer'
+    LOOP
+        EXECUTE 'DROP PROCEDURE IF EXISTS ' || proc_record.proname || '(' || proc_record.args || ')';
+    END LOOP;
+END $$;
+ROLLBACK;
+
+```
+
+
+# 15 - Pro:ind
+
+**user defined functions**
+```
+
+
+
+
 
 
 
