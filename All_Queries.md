@@ -430,4 +430,86 @@ group by date (payment_date)
 
 ```
 
+# 12 - Grouping sets,rollups,selfjoins
+**Rollup**
+```
+Select
+'Q'||To_char(payment_date,'Q') as quater,
+Extract (month from payment_date) as month,
+Date(payment_date),
+sum(amount)
+
+from payment
+group by
+rollup(
+
+'Q'||To_char(payment_date,'Q') ,
+Extract (month from payment_date) ,
+Date(payment_date)
+)
+order by 1,2,3
+
+
+Select 
+extract (quarter from book_date) as quater,
+Extract (month from book_date ) as month,
+To_char (book_date,'w') as week_in_month,
+Date(book_date),
+sum(total_amount)
+From bookings
+group by
+rollup(
+extract (quarter from book_date),
+Extract (month from book_date ) ,
+To_char (book_date,'w') ,
+Date(book_date)
+)
+order by 1,2,3,4
+```
+
+**Cube**
+```
+Select 
+customer_id,
+staff_id,
+Date(payment_date),
+sum(amount)
+from payment
+group by
+cube(
+customer_id,
+staff_id,
+Date(payment_date)
+)
+Order by 1,2,3
+
+
+SELECT 
+p.customer_id,
+DATE(payment_date),
+title,
+SUM(amount) as total
+FROM payment p
+LEFT JOIN rental r
+ON r.rental_id=p.rental_id
+LEFT JOIN inventory i
+ON i.inventory_id=r.inventory_id
+LEFT JOIN film f
+ON f.film_id=i.film_id
+GROUP BY 
+CUBE(
+p.customer_id,
+DATE(payment_date),
+title
+)
+ORDER BY 1,2,3
+```
+
+
+**Self_joins**
+```
+
+```
+
+
 
