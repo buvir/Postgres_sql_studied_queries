@@ -709,13 +709,76 @@ ROLLBACK;
 ```
 
 
-# 15 - Pro:ind
+# 15 - Pro:indexes partining and query optimization
 
-**user defined functions**
+**Create User role**
+```
+Create user *****
+with password '********';
+
+CREATE ROLE **** WITH LOGIN PASSWORD '*******';
 ```
 
+**Grant & Revoke Privileges**
+```
+-- Create users
+
+CREATE USER ria
+WITH PASSWORD 'ria123';
 
 
+CREATE USER mike
+WITH PASSWORD 'mike123';
+
+
+-- Create roles
+CREATE ROLE read_only;
+CREATE ROLE read_update;
+
+
+-- Grant usage (already granted)
+GRANT USAGE
+ON SCHEMA public
+TO read_only;
+
+-- Grant SELECT on tables
+GRANT SELECT
+ON ALL TABLES IN SCHEMA public
+TO read_only;
+
+-- Assign read_only to read_update role
+GRANT read_only
+TO read_update;
+
+-- Grant all privileges on all tables in public to role
+GRANT ALL
+ON ALL TABLES IN SCHEMA public
+TO read_update;
+
+
+-- Revoke some privileges
+REVOKE DELETE, INSERT
+ON ALL TABLES IN SCHEMA public
+FROM read_update;
+
+-- Assign role to users
+GRANT read_update
+TO ria;
+
+
+-- DROP roles
+DROP ROLE mike;
+
+DROP ROLE read_update;
+
+
+
+-- Removing dependancies
+DROP OWNED BY read_update;
+DROP ROLE read_update;
+
+
+```
 
 
 
