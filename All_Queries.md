@@ -777,6 +777,35 @@ DROP ROLE read_update;
 DROP OWNED BY read_update;
 DROP ROLE read_update;
 
+```
+
+
+**INdexes:B-tree,Bitmap  indexes , creating indexes**
+```
+SELECT * FROM flights f2
+WHERE flight_no < (SELECT MAX(flight_no)
+				  FROM flights f1
+				   WHERE f1.departure_airport=f2.departure_airport
+				   )
+--
+
+CREATE INDEX flight_no_index
+ON flights
+(departure_airport,flight_no)
+
+
+Select (select avg(amount) from payment p2
+where p2.rental_id=p1.rental_id)
+from payment p1
+
+Create index index_rental_id_payment
+on payment
+(rental_id)
+
+```
+
+**Execution Plan and query performance**
+```
 
 ```
 
