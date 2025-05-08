@@ -803,12 +803,140 @@ on payment
 (rental_id)
 
 ```
+# 16 - CTE'S Common Table Expression
+**CTE'S Common Table Expression - example**
+```
+-- 2 Query withour CTE
 
-**Execution Plan and query performance**
+Select 	film_id, title,rental_count
+from (
+Select f.film_id,f.title,count(r.rental_id) as rental_count
+From film f
+join inventory i on f.film_id = i.film_id
+join rental r on i.inventory_id=r.inventory_id
+Group By f.film_id,f.title
+)
+as film_rentals
+where rental_count >30
+
+
+--1 query with cte
+with subquery as (Select f.film_id,f.title,count(r.rental_id) as rental_count
+From film f
+join inventory i on f.film_id = i.film_id
+join rental r on i.inventory_id=r.inventory_id
+Group By f.film_id,f.title
+)
+Select 	film_id, title,rental_count
+from subquery as film_rentals
+where rental_count >30
+
 ```
 
+**Using Multiple CTEs**
 ```
+-- Step 1: Create a CTE to calculate the total rental count and total rental amount for each customer
+ 
+WITH customer_totals AS (
+    SELECT c.customer_id, c.first_name, c.last_name,
+           COUNT(r.rental_id) AS rental_count,
+           SUM(p.amount) AS total_amount
+    FROM customer c
+    JOIN rental r ON c.customer_id = r.customer_id
+    JOIN payment p ON c.customer_id = p.customer_id AND p.rental_id = r.rental_id
+    GROUP BY c.customer_id, c.first_name, c.last_name
+),
+ 
+-- Step 2: Calculate the average rental count across all customers
+ 
+average_rental_count AS (
+    SELECT AVG(rental_count) AS avg_rental_count
+    FROM customer_totals
+)
+,
+ 
+-- Step 3: Identify customers who have rented more than the average number of films (high-rental customers)
+ 
+high_rental_customers AS (
+    SELECT ct.customer_id, ct.first_name, ct.last_name, ct.rental_count, ct.total_amount
+    FROM customer_totals ct
+    JOIN average_rental_count arc ON ct.rental_count > arc.avg_rental_count
+)
+ 
+-- Step 4: List the details of the films rented by these high-rental customers
+ 
+SELECT hrc.customer_id, hrc.first_name, hrc.last_name, hrc.rental_count, hrc.total_amount, f.film_id, f.title
+FROM high_rental_customers hrc
+JOIN rental r ON hrc.customer_id = r.customer_id
+JOIN inventory i ON r.inventory_id = i.inventory_id
+JOIN film f ON i.film_id = f.film_id;
 
 
+
+
+Explanation of the Query
+CTE for Customer Totals (customer_totals):
+
+Calculate the total rental count and total rental amount for each customer.
+
+Group by customer_id, first_name, and last_name.
+
+WITH customer_totals AS (
+    SELECT c.customer_id, c.first_name, c.last_name,
+           COUNT(r.rental_id) AS rental_count,
+           SUM(p.amount) AS total_amount
+    FROM customer c
+    JOIN rental r ON c.customer_id = r.customer_id
+    JOIN payment p ON c.customer_id = p.customer_id AND p.rental_id = r.rental_id
+    GROUP BY c.customer_id, c.first_name, c.last_name
+),
+CTE for Average Rental Count (average_rental_count):
+
+Calculate the average rental count across all customers.
+
+average_rental_count AS (
+    SELECT AVG(rental_count) AS avg_rental_count
+    FROM customer_totals
+),
+CTE for High-Rental Customers (high_rental_customers):
+
+Identify customers who have rented more than the average number of films.
+
+high_rental_customers AS (
+    SELECT ct.customer_id, ct.first_name, ct.last_name, ct.rental_count, ct.total_amount
+    FROM customer_totals ct
+    JOIN average_rental_count arc ON ct.rental_count > arc.avg_rental_count
+)
+Final Query:
+
+List the details of the films rented by high-rental customers.
+
+SELECT hrc.customer_id, hrc.first_name, hrc.last_name, hrc.rental_count, hrc.total_amount, f.film_id, f.title
+FROM high_rental_customers hrc
+JOIN rental r ON hrc.customer_id = r.customer_id
+JOIN inventory i ON r.inventory_id = i.inventory_id
+JOIN film f ON i.film_id = f.film_id;
+```
+**Recurisive CTEs**
+```
+--Step 1: Use a recursive CTE to find all subordinates of a given employee.
+WITH RECURSIVE subordinate_tree AS (
+    -- Anchor member: Select the given employee with level 1
+    SELECT e.employee_id, e.name, e.manager_id, 1 AS level
+    FROM employee e
+    WHERE e.employee_id = 1  -- Start with the given employee (Alice)
+    
+    UNION ALL
+    
+    -- Recursive member: Select subordinates of the current set of employees and increment the level
+    SELECT e.employee_id, e.name, e.manager_id, st.level + 1 AS level
+    FROM employee e
+    INNER JOIN subordinate_tree st ON e.manager_id = st.employee_id
+)
+ 
+-- Step 2: Select all subordinates from the recursive CTE
+SELECT employee_id, name, manager_id, level
+FROM subordinate_tree;
+```
 
 
